@@ -1,7 +1,5 @@
 package info.redspirit.shinjukumeshi1609;
 
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,29 +12,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback {
-    private GoogleMap mMap;
-
+public class ShoplistActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+    ArrayList<Hoge> list;
+    ListView lv;
+    EditText et;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_shoplist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //はじめにDB作る
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.close();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -47,9 +44,55 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        et = (EditText)findViewById(R.id.inputText);
+        Button bt = (Button)findViewById(R.id.searchButton);
+        lv = (ListView)findViewById(R.id.shopList);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                select();
+            }
+        });
+
+        select();
+    }
+    public void select(){//名前後で変える
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        //データベースオブジェクトを取得する（データベースにアクセスすると作成される。）
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DAO dao = new DAO(db);
+        //検索蘭が空だったら全件
+        if(et.getText().toString().equals("")){
+
+            list=  dao.select();
+        }else{
+            list=dao.select(et.getText().toString());
+        }
+
+
+        db.close();
+
+        int itemLayoutId = R.layout.list;
+        ArrayAdapter<Hoge> adapter = new ArrayAdapter<Hoge>(this,itemLayoutId, list);
+
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                int a = list.get(position).getId();
+                //details(a);
+
+            }
+        });
+    }
+
+    public void details(int id){
+        /*
+        Intent intent = new Intent(getApplicationContext(),DetailsActivity.class);
+        intent.putExtra("id",id);
+        startActivity(intent);
+        */
     }
 
     @Override
@@ -65,18 +108,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.shoplist, menu);
         return true;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     @Override
