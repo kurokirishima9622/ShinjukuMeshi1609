@@ -1,8 +1,22 @@
 <resources>
-    <string name="app_name">ShinjukuMeshi1609</string>
+    <string name="app_name">新宿飯</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="recomend_select">お勧め店舗を見る</string>
+    <string name="shop_list">店舗一覧</string>
+    <string name="shop_search">店舗検索</string>
+    <string name="shop_profile">店舗詳細</string>
+    <string name="search">検索</string>
+    <string name="menu">Menu</string>
+    <string name="back_to_menu">メインメニューへ</string>
+    <string name="title_activity_shopsearch">店舗検索</string>
+    <string name="title_activity_shoplist">店舗一覧</string>
+    <string name="title_activity_recommend_shop">おすすめ店舗</string>
+    <string name="soon">近日実装予定</string>
+
 </resources>
